@@ -251,12 +251,12 @@ function parseArgs(str) {
 	return args
 }
 
-const map = new WeakMap()
-
 module.exports = function Require(mod) {
-	if(map.has(mod.base)) return map.get(mod.base)
+	if(mod.namespace !== 'command') {
+		const msg = Error(`"require('command')" is deprecated.\nUse "const {command} = mod.require" instead.`).stack
+		console.log('DeprecationWarning' + msg.slice(msg.indexOf(':')))
+		return mod.require.command
+	}
 
-	const instance = new Command(mod)
-	map.set(mod.base, instance)
-	return instance
+	return new Command(mod)
 }
