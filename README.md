@@ -1,30 +1,30 @@
+Original command module by Pinkie Pie (https://discord.gg/RR9zf85), modified and added auto-updating functionality.
+
 ## Usage
-Custom chat commands may be preceded by `/!` or entered into the `/proxy` chat channel (overrides **Private Channel 8** by default). To pass strings containing spaces as arguments, enclose them in quotes (`""` or `''`). To enclude quotes or backslashes in arguments, precede them with a backslash `\`.
+Type `/proxy` into chat to switch to the command line, then enter the specified command. To pass strings containing spaces as arguments, enclose them in quotes (`""` or `''`). To enclude quotes or backslashes in arguments, precede them with a backslash `\`.
 
 ### Examples
 ```
-/!mymod
+/proxy mymod
 ```
 ```
-/!mymod dostuff
+/proxy mymod dostuff
 ```
 ```
-/!mymod 123 456 'Hello ponies!'
+/proxy mymod 123 456 'Hello ponies!'
 ```
 ```
-/!mymod "This is a string containing 'quotes', \"similar quotes\", and \\backslashes."
+/proxy mymod "This is a string containing 'quotes', \"similar quotes\", and \\backslashes."
 ```
 
 ## Developers
-To use Command in your module, first require it in your mod's initializer using `mod.require.command` (or destructuring shorthand).
+To use Command in your module, you can just use `mod.command`. It is guaranteed to be installed by my proxy, even if the user attempts to delete it.
 
 ### Examples
 ```js
 module.exports = function MyMod(mod) {
-	const {command} = mod.require
-
-	command.add('mymod', (x, y, z) => {
-		command.message('Parameters: ' + [x, y, z].join(', '))
+	mod.command.add('mymod', (x, y, z) => {
+		mod.command.message('Parameters: ' + [x, y, z].join(', '))
 	})
 }
 ```
@@ -32,19 +32,16 @@ module.exports = function MyMod(mod) {
 #### Sub-Commands:
 ```js
 module.exports = function SubCommandTest(mod) {
-	const {command} = mod.require
-
-	command.add('test', {
-		$default(cmd) { command.message(`Unknown command "${cmd}".`) },
-		$none() { command.message('Usage: test [echo|hello]') },
+	mod.command.add('test', {
+		$default() { mod.command.message('Usage: test [echo|hello]') },
 		echo(...args) {
-			if(args[0] === undefined) command.message('Usage: test echo [msg]')
-			else command.message(args.join(' '))
+			if(args[0] === undefined) mod.command.message('Usage: test echo [msg]')
+			else mod.command.message(args.join(' '))
 		},
 		hello: {
-			$default() { command.message('Usage: test hello [blue|red]') },
-			blue() { command.message('<font color="#5555ff">Hello ponies!</font>') },
-			red() { command.message('<font color="#ff5555">Hello ponies!</font>') }
+			$default() { mod.command.message('Usage: test hello [blue|red]') },
+			blue() { mod.command.message('<font color="#5555ff">Hello ponies!</font>') },
+			red() { mod.command.message('<font color="#ff5555">Hello ponies!</font>') }
 		}
 	})
 }
@@ -59,7 +56,7 @@ Adds one or more command hooks. All commands must be unique and are case insensi
 
 `callback` may be a function or an object. Callback receives a variable number of input string arguments. If an object is provided, the object's keys are registered as sub-commands which may in turn be either a callback or another object. Two special keys are usable for sub-commands:
 * `$none` called if there were no arguments.
-* `$default` called with sub-command name as the first argument if no other hook was matched.
+* `$default` called if no other hook was matched.
 
 `context` optional `this` to pass to callbacks. Default is unspecified.
 
