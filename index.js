@@ -131,6 +131,42 @@ class CommandBase {
                 this.mod.settings.login_message = !this.mod.settings.login_message;
                 this.message(null, `Proxy login message ${this.mod.settings.login_message ? 'enabled' : 'disabled'}`);
             },
+            load(name) {
+                if(!name) {
+                    this.message(null, 'No module name specified!');
+                    return;
+                }
+
+                const result = this.mod.manager.load(name);
+                if(result)
+                    this.message(null, `Loaded "${name}"!`);
+                else
+                    this.message(null, `Unable to load "${name}", check log for details!`);
+            },
+            unload(name) {
+                if(!name) {
+                    this.message(null, 'No module name specified!');
+                    return;
+                }
+
+                const result = this.mod.manager.unload(name);
+                if(result)
+                    this.message(null, `Unloaded "${name}"!`);
+                else
+                    this.message(null, `Unable to unload "${name}", check log for details!`);
+            },
+            reload(name) {
+                if(!name) {
+                    this.message(null, 'No module name specified!');
+                    return;
+                }
+
+                const result = this.mod.manager.reload(name);
+                if(result)
+                    this.message(null, `Reloaded "${name}"!`);
+                else
+                    this.message(null, `Unable to reload "${name}", check log for details!`);
+            },
         }, this);
     }
 
