@@ -33,17 +33,19 @@ class CommandBase {
         mod.hook('S_JOIN_PRIVATE_CHANNEL', 1, event => event.index == PRIVATE_CHANNEL_INDEX ? false : undefined);
         mod.hook('C_LEAVE_PRIVATE_CHANNEL', 1, event => event.index == PRIVATE_CHANNEL_INDEX ? false : undefined);
 
-        mod.hook('C_REQUEST_PRIVATE_CHANNEL_INFO', 1, event => {
-            if(event.channelId === PRIVATE_CHANNEL_ID) {
-                mod.send('S_REQUEST_PRIVATE_CHANNEL_INFO', 1, {
-                    owner: 1,
-                    password: 0,
-                    members: [],
-                    friends: []
-                });
-                return false;
-            }
-        });
+        if (mod.platform !== 'classic') {
+            mod.hook('C_REQUEST_PRIVATE_CHANNEL_INFO', 1, event => {
+                if(event.channelId === PRIVATE_CHANNEL_ID) {
+                    mod.send('S_REQUEST_PRIVATE_CHANNEL_INFO', 1, {
+                        owner: 1,
+                        password: 0,
+                        members: [],
+                        friends: []
+                    });
+                    return false;
+                }
+            });
+        }
 
         let lastError,
             hookCommand = message => {
