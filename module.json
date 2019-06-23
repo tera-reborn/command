@@ -1,14 +1,13 @@
 {
-    "disableAutoUpdate": false,
     "name": "command",
     "author": "Caali / Pinkie Pie",
     "description": "Add ingame chat commands to your mod.",
-    "version": "1.0",
+    "version": "1.1",
     "options": {
         "niceName": "Command",
         "settingsVersion": 1,
         "settingsFile": "config.json",
         "settingsMigrator": "settings_migrator.js"
     },
-    "servers": ["https://raw.githubusercontent.com/caali-hackerman/command/master/"]
+    "servers": ["https://raw.githubusercontent.com/tera-toolbox/command/master/"]
 }

@@ -1,8 +1,8 @@
 {
     "files": {
-        "index.js": "74e7ddf16ba4494455153277ba0f8c99a0d1a1f68bc5854cbf606fb5a5bf4ee9",
+        "index.js": "413d93991f845cd3db4332b71ab76ef5f7617615f0507384c8d5379d9bf1860f",
         "settings_migrator.js": "12b4300ed84fa2d3d298c8f5da912c63a1e76f712f7942fcacc88b12c8437131",
-        "module.json": "f1e198e4e157be9b927d5ea697f165ca9b312ae14a05fbe74c9244f65482fdde"
+        "module.json": "6635479e5468a512ce1c0bd5d6049d5ce8b813c87f4b81058e69a028696ed283"
     },
     "defs": {
         "S_LOGIN": "raw",
