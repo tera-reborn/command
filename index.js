@@ -30,8 +30,9 @@ class CommandBase {
 
                     mod.setTimeout(() => {
                         if (this.queue) {
-                            this.queue.forEach(entry => this.message(...entry));
+                            const queue = this.queue;
                             this.queue = null;
+                            queue.forEach(entry => this.message(...entry));
                         }
                     }, 2000);
                 });
