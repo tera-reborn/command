@@ -43,10 +43,10 @@ class CommandBase {
         mod.hook('C_LEAVE_PRIVATE_CHANNEL', 1, event => event.index === PRIVATE_CHANNEL_INDEX ? false : undefined);
 
         if (mod.platform !== 'classic') {
-            mod.hook('C_REQUEST_PRIVATE_CHANNEL_INFO', 1, event => {
+            mod.hook('C_REQUEST_PRIVATE_CHANNEL_INFO', 2, event => {
                 if (event.channelId === PRIVATE_CHANNEL_ID) {
-                    mod.send('S_REQUEST_PRIVATE_CHANNEL_INFO', 1, {
-                        owner: 1,
+                    mod.send('S_REQUEST_PRIVATE_CHANNEL_INFO', 2, {
+                        owner: true,
                         password: 0,
                         members: [],
                         friends: []
