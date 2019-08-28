@@ -1,24 +1,24 @@
 Original command module by Pinkie Pie (https://discord.gg/RR9zf85), modified and added auto-updating functionality.
 
 ## Usage
-Type `/proxy` into chat to switch to the command line, then enter the specified command. To pass strings containing spaces as arguments, enclose them in quotes (`""` or `''`). To enclude quotes or backslashes in arguments, precede them with a backslash `\`.
+Type `/toolbox` or `/8` into chat to switch to the command line, then enter the specified command. To pass strings containing spaces as arguments, enclose them in quotes (`""` or `''`). To enclude quotes or backslashes in arguments, precede them with a backslash `\`.
 
 ### Examples
 ```
-/proxy mymod
+/toolbox mymod
 ```
 ```
-/proxy mymod dostuff
+/toolbox mymod dostuff
 ```
 ```
-/proxy mymod 123 456 'Hello ponies!'
+/toolbox mymod 123 456 'Hello!'
 ```
 ```
-/proxy mymod "This is a string containing 'quotes', \"similar quotes\", and \\backslashes."
+/toolbox mymod "This is a string containing 'quotes', \"similar quotes\", and \\backslashes."
 ```
 
 ## Developers
-To use Command in your module, you can just use `mod.command`. It is guaranteed to be installed by my proxy, even if the user attempts to delete it.
+To use Command in your module, you can just use `mod.command`. It is guaranteed to be installed, even if the user attempts to delete it.
 
 ### Examples
 ```js
@@ -40,8 +40,8 @@ module.exports = function SubCommandTest(mod) {
 		},
 		hello: {
 			$default() { mod.command.message('Usage: test hello [blue|red]') },
-			blue() { mod.command.message('<font color="#5555ff">Hello ponies!</font>') },
-			red() { mod.command.message('<font color="#ff5555">Hello ponies!</font>') }
+			blue() { mod.command.message('<font color="#5555ff">Hello!</font>') },
+			red() { mod.command.message('<font color="#ff5555">Hello!</font>') }
 		}
 	})
 }
@@ -66,7 +66,7 @@ Removes one or more command hooks.
 `command` may be a string or an array of strings.
 
 #### `message(msg)`
-Sends a message in the `[Proxy]` channel. May contain HTML.
+Sends a message in the `[Toolbox]` channel. May contain HTML.
 
 #### `exec(str)`
 Executes a raw command string. If `str` is an array then it will be interpreted as arguments instead.

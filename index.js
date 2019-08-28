@@ -15,34 +15,35 @@ class CommandBase {
         mod.hook('S_LOGIN', 'raw', () => { this.loaded = false; });
 
         mod.hook('S_LOAD_CLIENT_USER_SETTING', 'raw', () => {
-            if (!this.loaded) {
-                this.loaded = true;
-                process.nextTick(() => {
-                    mod.send('S_JOIN_PRIVATE_CHANNEL', 2, {
-                        index: PRIVATE_CHANNEL_INDEX,
-                        channelId: PRIVATE_CHANNEL_ID,
-                        unk: [],
-                        name: this.mod.settings.private_channel_name,
-                    });
+            if (this.loaded)
+                return;
 
-                    if (this.mod.settings.login_message)
-                        this.message(null, `Client ${this.mod.majorPatchVersion}.${this.mod.minorPatchVersion} - Protocol ${this.mod.protocolVersion}`);
-
-                    mod.setTimeout(() => {
-                        if (this.queue) {
-                            const queue = this.queue;
-                            this.queue = null;
-                            queue.forEach(entry => this.message(...entry));
-                        }
-                    }, 2000);
+            this.loaded = true;
+            process.nextTick(() => {
+                mod.send('S_JOIN_PRIVATE_CHANNEL', 2, {
+                    index: PRIVATE_CHANNEL_INDEX,
+                    channelId: PRIVATE_CHANNEL_ID,
+                    unk: [],
+                    name: this.mod.settings.private_channel_name,
                 });
-            }
+
+                if (this.mod.settings.login_message)
+                    this.message(null, `Client ${this.mod.majorPatchVersion}.${this.mod.minorPatchVersion} - Protocol ${this.mod.protocolVersion}`);
+
+                mod.setTimeout(() => {
+                    if (this.queue) {
+                        const queue = this.queue;
+                        this.queue = null;
+                        queue.forEach(entry => this.message(...entry));
+                    }
+                }, 2000);
+            });
         })
 
         mod.hook('S_JOIN_PRIVATE_CHANNEL', 2, event => event.index === PRIVATE_CHANNEL_INDEX ? false : undefined);
         mod.hook('C_LEAVE_PRIVATE_CHANNEL', 1, event => event.index === PRIVATE_CHANNEL_INDEX ? false : undefined);
 
-        if (mod.platform !== 'classic') {
+        if (mod.majorPatchVersion >= 35) {
             mod.hook('C_REQUEST_PRIVATE_CHANNEL_INFO', 2, event => {
                 if (event.channelId === PRIVATE_CHANNEL_ID) {
                     mod.send('S_REQUEST_PRIVATE_CHANNEL_INFO', 2, {
@@ -128,22 +129,22 @@ class CommandBase {
         });
 
         // Add own commands
-        this.add('proxy', {
+        this.add(['toolbox', 'proxy'], {
             $default() {
-                this.message(null, `Proxy commands:`);
-                this.message(null, `onlychannel - Toggles ability to enter commands in proxy channel only (recommended) or all channels`);
-                this.message(null, `loginmessage - Toggles proxy status message shown on login`);
+                this.message(null, `TERA Toolbox commands:`);
+                this.message(null, `onlychannel - Toggles ability to enter commands in Toolbox channel only (recommended) or all channels`);
+                this.message(null, `loginmessage - Toggles the status message shown on login`);
                 this.message(null, `load [module name] - Loads the given module`);
                 this.message(null, `unload [module name] - Unloads the given module`);
                 this.message(null, `reload [module name] - Reloads the given module`);
             },
             onlychannel() {
                 this.mod.settings.public_enable = !this.mod.settings.public_enable;
-                this.message(null, `Commands can now be entered in ${this.mod.settings.public_enable ? 'all chat channels' : 'proxy channel only'}`);
+                this.message(null, `Commands can now be entered in ${this.mod.settings.public_enable ? 'all chat channels' : 'Toolbox channel only'}`);
             },
             loginmessage() {
                 this.mod.settings.login_message = !this.mod.settings.login_message;
-                this.message(null, `Proxy login message ${this.mod.settings.login_message ? 'enabled' : 'disabled'}`);
+                this.message(null, `Toolbox login message ${this.mod.settings.login_message ? 'enabled' : 'disabled'}`);
             },
             load(name) {
                 if (!name) {
@@ -356,6 +357,12 @@ class Command {
     constructor(mod, base) {
         this.mod = mod;
         this.base = base || new CommandBase(mod);
+        this.commands = new Set;
+    }
+
+    destructor() {
+        this.base.remove(Array.from(this.commands));
+        this.commands.clear();
     }
 
     exec(str) {
@@ -363,11 +370,25 @@ class Command {
     }
 
     add(cmd, cb, ctx) {
-        return this.base.add(cmd, cb, ctx);
+        this.base.add(cmd, cb, ctx);
+
+        if (Array.isArray(cmd)) {
+            for (let c of cmd)
+                this.commands.add(c);
+        } else {
+            this.commands.add(cmd);
+        }
     }
 
     remove(cmd) {
-        return this.base.remove(cmd);
+        this.base.remove(cmd);
+
+        if (Array.isArray(cmd)) {
+            for (let c of cmd)
+                this.commands.delete(c);
+        } else {
+            this.commands.delete(cmd);
+        }
     }
 
     message(msg) {

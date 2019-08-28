@@ -1,8 +1,10 @@
 {
     "files": {
-        "index.js": "aed0769edda510a6aa758f9da180512a3a16daa83cdffd761c15f0eee8d17146",
-        "settings_migrator.js": "12b4300ed84fa2d3d298c8f5da912c63a1e76f712f7942fcacc88b12c8437131",
-        "module.json": "6635479e5468a512ce1c0bd5d6049d5ce8b813c87f4b81058e69a028696ed283"
+        "index.js": "6fc71e872dcb3929ea6e7887960457134528852a6660a3d621818f8d5f8f4348",
+        "settings_migrator.js": "4a65666d273589052c341173c1670ca034dabb2e1d3cb28260fe190a2c1c1f62",
+        "module.json": "70426e7a1ab229c10c315e870fd40f1b786324267b368938ba86b7daedf816d1",
+        "LICENSE": "589ed823e9a84c56feb95ac58e7cf384626b9cbf4fda2a907bc36e103de1bad2",
+        "README.md": "c88bf8c5751c58167d5ba4a0381ee55fd790abc812fde42483c181724ca2dd1d"
     },
     "defs": {
         "S_LOGIN": "raw",
