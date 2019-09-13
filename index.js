@@ -1,7 +1,7 @@
 'use strict'
 
 const PRIVATE_CHANNEL_INDEX = 7,
-    PRIVATE_CHANNEL_ID = -2 >>> 0,
+    PRIVATE_CHANNEL_ID = -2,
     PUBLIC_MATCH = /^!([^!].*)$/;
 
 
@@ -12,9 +12,9 @@ class CommandBase {
         this.queue = [];
         this.hooks = {};
 
-        mod.hook('S_LOGIN', 'raw', () => { this.loaded = false; });
+        mod.hook('S_LOGIN', 'event', () => { this.loaded = false; });
 
-        mod.hook('S_LOAD_CLIENT_USER_SETTING', 'raw', () => {
+        mod.hook('S_LOAD_CLIENT_USER_SETTING', 'event', () => {
             if (this.loaded)
                 return;
 
