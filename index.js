@@ -14,7 +14,7 @@ class CommandBase {
 
         mod.hook('S_LOGIN', 'event', () => { this.loaded = false; });
 
-        mod.hook('S_LOAD_CLIENT_USER_SETTING', 'event', () => {
+        mod.hook(mod.majorPatchVersion >= 90 ? 'S_REPLY_CLIENT_CHAT_OPTION_SETTING' : 'S_LOAD_CLIENT_USER_SETTING', 'event', () => {
             if (this.loaded)
                 return;
 
