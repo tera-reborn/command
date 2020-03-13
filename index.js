@@ -10,7 +10,7 @@ class CommandBase {
         this.mod = mod;
         this.loaded = false;
         this.queue = [];
-        this.hooks = {};
+        this.hooks = new Map();
 
         mod.hook('S_LOGIN', 'event', () => { this.loaded = false; });
 
@@ -64,14 +64,14 @@ class CommandBase {
                 try {
                     args = parseArgs(stripOuterHTML(message));
                 } catch (e) {
-                    return 'Syntax error: ' + e.message;
+                    return `Syntax error: ${e.message}`;
                 }
 
                 try {
                     if (!this.exec(args))
-                        return 'Unknown command "' + args[0] + '".';
+                        return `Unknown command "${args[0]}"`;
                 } catch (e) {
-                    this.message(null, 'Error running callback for command "' + args[0] + '".');
+                    this.message(null, `Error running callback for command "${args[0]}"`);
                     mod.error(e);
                 }
             }
@@ -132,11 +132,16 @@ class CommandBase {
         this.add(['toolbox', 'proxy'], {
             $default() {
                 this.message(null, `TERA Toolbox commands:`);
+                this.message(null, `silent - Toggles ability to hide command messages from game chat`);
                 this.message(null, `onlychannel - Toggles ability to enter commands in Toolbox channel only (recommended) or all channels`);
                 this.message(null, `loginmessage - Toggles the status message shown on login`);
                 this.message(null, `load [module name] - Loads the given module`);
                 this.message(null, `unload [module name] - Unloads the given module`);
                 this.message(null, `reload [module name] - Reloads the given module`);
+            },
+            silent() {
+                this.message(null, `Command messages in game chat will be ${this.mod.settings.silent_mode ? 'hidden' : 'visible'}`);
+                this.mod.settings.silent_mode = !this.mod.settings.silent_mode;
             },
             onlychannel() {
                 this.mod.settings.public_enable = !this.mod.settings.public_enable;
@@ -190,7 +195,7 @@ class CommandBase {
         if (args.length === 0)
             return false;
 
-        const cb = this.hooks[args[0].toLowerCase()];
+        const cb = this.hooks.get(args[0].toLowerCase());
 
         if (cb) {
             cb.call(...args);
@@ -222,10 +227,10 @@ class CommandBase {
             throw new Error('Command must not be an empty string');
 
         cmd = cmd.toLowerCase();
-        if (this.hooks[cmd])
-            throw new Error('Command already registered:', cmd);
+        if (this.hooks.has(cmd))
+            throw new Error(`Command already registered: ${cmd}`);
 
-        this.hooks[cmd] = cb;
+        this.hooks.set(cmd, cb);
     }
 
     remove(cmd) {
@@ -240,7 +245,7 @@ class CommandBase {
         if (cmd === '')
             throw new Error('Command must not be an empty string');
 
-        delete this.hooks[cmd.toLowerCase()];
+        this.hooks.delete(cmd.toLowerCase());
     }
 
     message(modName, msg) {
@@ -248,12 +253,15 @@ class CommandBase {
             // Not ready yet, delay sending the message
             this.queue.push([modName, msg]);
         } else {
-            this.mod.send('S_PRIVATE_CHAT', 1, {
-                channel: PRIVATE_CHANNEL_ID,
-                authorID: 0,
-                authorName: '',
-                message: (modName && !this.mod.settings.hide_module_names) ? `[${modName}] ${msg}` : ` ${msg}`,
-            });
+            if (this.mod.settings.silent_mode)
+                this.mod.log(`[${modName}] ${msg}`);
+            else
+                this.mod.send('S_PRIVATE_CHAT', 1, {
+                    channel: PRIVATE_CHANNEL_ID,
+                    authorID: 0,
+                    authorName: '',
+                    message: (modName && !this.mod.settings.hide_module_names) ? `[${modName}] ${msg}` : ` ${msg}`,
+                });
         }
     }
 }
@@ -357,7 +365,7 @@ class Command {
     constructor(mod, base) {
         this.mod = mod;
         this.base = base || new CommandBase(mod);
-        this.commands = new Set;
+        this.commands = new Set();
     }
 
     destructor() {

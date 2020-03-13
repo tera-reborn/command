@@ -1,4 +1,5 @@
 const DefaultSettings = {
+    silent_mode: false,
     login_message: true,
     private_channel_name: 'Toolbox',
     public_enable: true,
@@ -27,6 +28,9 @@ module.exports = function MigrateSettings(from_ver, to_ver, settings) {
                 if (settings.private_channel_name === 'Proxy')
                     settings.private_channel_name = 'Toolbox';
                 break;
+            case 3:
+               settings.silent_mode = false;
+               break;
         }
 
         return settings;
