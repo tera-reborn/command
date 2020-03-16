@@ -140,8 +140,8 @@ class CommandBase {
                 this.message(null, `reload [module name] - Reloads the given module`);
             },
             silent() {
-                this.message(null, `Command messages in game chat will be ${this.mod.settings.silent_mode ? 'hidden' : 'visible'}`);
                 this.mod.settings.silent_mode = !this.mod.settings.silent_mode;
+                this.message(null, `Command messages in game chat will be ${this.mod.settings.silent_mode ? 'hidden' : 'visible'}`);
             },
             onlychannel() {
                 this.mod.settings.public_enable = !this.mod.settings.public_enable;
