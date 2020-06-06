@@ -249,18 +249,20 @@ class CommandBase {
     }
 
     message(modName, msg) {
+        const showModName = modName && !this.mod.settings.hide_module_names;
+        
         if (this.queue) {
             // Not ready yet, delay sending the message
             this.queue.push([modName, msg]);
         } else {
             if (this.mod.settings.silent_mode)
-                this.mod.log(`[${modName}] ${msg}`);
+                this.mod.log(showModName ? `[${modName}] ${msg}` : msg);
             else
                 this.mod.send('S_PRIVATE_CHAT', 1, {
                     channel: PRIVATE_CHANNEL_ID,
                     authorID: 0,
                     authorName: '',
-                    message: (modName && !this.mod.settings.hide_module_names) ? `[${modName}] ${msg}` : ` ${msg}`,
+                    message: (showModName) ? `[${modName}] ${msg}` : ` ${msg}`,
                 });
         }
     }
