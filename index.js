@@ -28,7 +28,7 @@ class CommandBase {
                 });
 
                 if (this.mod.settings.login_message)
-                    this.message(null, `Client ${this.mod.majorPatchVersion}.${this.mod.minorPatchVersion} - Protocol ${this.mod.protocolVersion}`);
+                    this.message(null, `${this.mod.publisher.toUpperCase()}-${this.mod.majorPatchVersion}.${this.mod.minorPatchVersion} ${this.mod.environment !== 'live' ? `${this.mod.environment} ` : ''}(${this.mod.dispatch.protocolVersion})`);
 
                 mod.setTimeout(() => {
                     if (this.queue) {
@@ -402,7 +402,7 @@ class Command {
     }
 
     message(msg) {
-        return this.base.message(this.mod.niceName, msg);
+        return this.base.message(this.mod.info.options.cliName || this.mod.info.rawName, msg);
     }
 
     createInstance(mod) {
@@ -410,4 +410,7 @@ class Command {
     }
 }
 
-module.exports = Command;
+module.exports = {
+    NetworkMod: Command,
+    RequireInterface: (globalMod, clientMod, networkMod, requiredBy) => networkMod,
+};
