@@ -135,8 +135,8 @@ class CommandBase {
                 this.message(null, `silent - Toggles ability to hide command messages from game chat`);
                 this.message(null, `onlychannel - Toggles ability to enter commands in Toolbox channel only (recommended) or all channels`);
                 this.message(null, `loginmessage - Toggles the status message shown on login`);
-                this.message(null, `load [module name] - Loads the given module`);
-                this.message(null, `unload [module name] - Unloads the given module`);
+                this.message(null, `load [module name] [0(default) - load network part, 1 - load fully] - Loads the given module`);
+                this.message(null, `unload [module name] [0(default) - unload network part, 1 - unload fully] - Unloads the given module`);
                 this.message(null, `reload [module name] - Reloads the given module`);
             },
             silent() {
@@ -151,9 +151,21 @@ class CommandBase {
                 this.mod.settings.login_message = !this.mod.settings.login_message;
                 this.message(null, `Toolbox login message ${this.mod.settings.login_message ? 'enabled' : 'disabled'}`);
             },
-            load(name) {
+            load(name, mode = "0") {
                 if (!name) {
                     this.message(null, 'No module name specified!');
+                    return;
+                }
+
+                if(mode == "0") {
+                    let modRef = mod.manager.get(name);
+                    if (modRef) { 
+                        modRef.loadNetworkInstance(this.mod.dispatch);
+                        this.message(null, `Loaded network instance for mod "${name}" in current connection!`);
+                    }
+                    else {
+                        this.message(null, `Unable to load network instance for mod "${name}"!`);
+                    }
                     return;
                 }
 
@@ -163,9 +175,21 @@ class CommandBase {
                 else
                     this.message(null, `Unable to load "${name}", check log for details!`);
             },
-            unload(name) {
+            unload(name, mode = "0") {
                 if (!name) {
                     this.message(null, 'No module name specified!');
+                    return;
+                }
+
+                if(mode == "0") {
+                    let modRef = mod.manager.get(name);
+                    if (modRef) { 
+                        modRef.unloadNetworkInstance(this.mod.dispatch);
+                        this.message(null, `Unloaded network instance for mod "${name}" in current connection!`);
+                    }
+                    else {
+                        this.message(null, `Unable to unload network instance for mod "${name}"!`);
+                    }
                     return;
                 }
 
