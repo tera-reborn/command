@@ -102,7 +102,7 @@ class CommandBase {
             }
         });
 
-        mod.hook('C_WHISPER', 1, { order: -10 }, event => {
+        mod.hook('C_WHISPER', mod.majorPatchVersion >= 108 ? 2 : 1, { order: -10 }, event => {
             if (!this.mod.settings.public_enable)
                 return;
 
@@ -116,7 +116,7 @@ class CommandBase {
         });
 
         // Let other modules handle possible commands before we silence them
-        mod.hook('C_WHISPER', 1, { order: 10, filter: { silenced: null } }, event => {
+        mod.hook('C_WHISPER', mod.majorPatchVersion >= 108 ? 2 : 1, { order: 10, filter: { silenced: null } }, event => {
             if (!this.mod.settings.public_enable)
                 return;
 
